@@ -1,0 +1,33 @@
+{
+  "name": "layout",
+  "version": "1.0.0",
+  "description": "A package to manage the creation and usage of layouts like two-dimensional floor plans, maps, etc, using a grid.",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha src/**/*.spec.js"
+  },
+  "author": {
+    "name": "Christopher Jacobs",
+    "email": "apexearth@gmail.com"
+  },
+  "license": "ISC",
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "jsx": true
+      }
+    },
+    "rules": {
+      "semi": [
+        "error",
+        "never"
+      ],
+      "no-var": "error"
+    }
+  },
+  "devDependencies": {
+    "chai": "^4.1.2"
+  }
+}
