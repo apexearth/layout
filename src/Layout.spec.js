@@ -3,7 +3,7 @@ const Layout   = require('./Layout')
 
 describe('Layout', () => {
     it('basics', () => {
-        const layout = new Layout()
+        let layout = new Layout()
 
         layout.addSection(0, 0, 2, 2)
         expect(layout.bounds).to.deep.equal({
@@ -35,14 +35,12 @@ describe('Layout', () => {
         expect(layout.square(0, 1).sections.length).to.equal(1)
         expect(layout.square(0, -1).sections.length).to.equal(1)
         expect(layout.square(0, -1).sections[0]).to.not.equal(layout.square(0, 1).sections[0])
-    })
 
-    it('can print an ascii image of itself!', () => {
         /**
          * The image is actually based on connectors.
          * A 1 by 1 section shows 2 by 2 x's because each corner is a connector.
          */
-        let layout = new Layout()
+        layout = new Layout()
         layout.addSection(-1, -1, 1, 1)
         expect(layout.toString()).to.equal(
             'xxx\n' +
@@ -82,19 +80,51 @@ describe('Layout', () => {
         )
 
         layout.deleteSections(0, 0) // Delete sections overlapping this location
-        expect(layout.size).to.equal(48)
+        expect(layout.size).to.equal(4)
         expect(layout.bounds).to.deep.equal({
-            left: -2, top: -1, right: 3, bottom: 6
+            left: 3, top: 3, right: 3, bottom: 6
         })
         expect(layout.toString()).to.equal(
-            '      \n' +
-            '      \n' +
-            '      \n' +
-            '      \n' +
-            '     x\n' +
-            '     x\n' +
-            '     x\n' +
-            '     x\n'
+            'x\n' +
+            'x\n' +
+            'x\n' +
+            'x\n'
+        )
+
+        layout.deleteAllSections()
+        expect(layout.size).to.equal(0)
+        expect(layout.bounds).to.deep.equal({
+            left: undefined, top: undefined, right: undefined, bottom: undefined
+        })
+        expect(layout.toString()).to.equal(
+            ''
+        )
+
+        layout = new Layout({autoShrink: false})
+        layout.addSection(3, 3, 3, 6)
+        layout.deleteAllSections()
+        expect(layout.size).to.equal(4)
+        expect(layout.bounds).to.deep.equal({
+            left: 3, top: 3, right: 3, bottom: 6
+        })
+        expect(layout.toString()).to.equal(
+            ' \n' +
+            ' \n' +
+            ' \n' +
+            ' \n'
+        )
+        layout.addSection(1, 3, 1, 6)
+        expect(layout.size).to.equal(12)
+        expect(layout.bounds).to.deep.equal({
+            left: 1, top: 3, right: 3, bottom: 6
+        })
+        expect(layout.toString()).to.equal(
+            'x  \n' +
+            'x  \n' +
+            'x  \n' +
+            'x  \n'
         )
     })
+
+
 })
