@@ -38,12 +38,26 @@ class Layout {
         this.size          = (1 + this.bounds.right - this.bounds.left) * (1 + this.bounds.bottom - this.bounds.top)
     }
 
-    addSection(left, top, right, bottom) {
+    addSection(left, top, right, bottom, name) {
         if (left > right) throw new Error('Left can not be greater than right.')
         if (top > bottom) throw new Error('Top can not be greater than Bottom.')
         let section = {
+            layout : this,
+            name,
             left, top, right, bottom,
-            squares: []
+            squares: [],
+            bringToFront() {
+                bringToFront(this.layout.sections, this)
+                this.squares.forEach(square => {
+                    bringToFront(square.sections, this)
+                })
+            },
+            sendToBack() {
+                sendToBack(this.layout.sections, this)
+                this.squares.forEach(square => {
+                    sendToBack(square.sections, this)
+                })
+            }
         }
         this.sections.push(section)
         this.updateBounds(section)
@@ -58,6 +72,7 @@ class Layout {
                 this.grid[`${x},${y}`] = square
             }
         }
+        return section
     }
 
     deleteAllSections() {
@@ -97,7 +112,13 @@ class Layout {
         let output = ""
         for (let y = this.bounds.top; y <= this.bounds.bottom; y++) {
             for (let x = this.bounds.left; x <= this.bounds.right; x++) {
-                output += this.square(x, y) ? 'x' : ' '
+                let square = this.square(x, y)
+                if (square) {
+                    let name = square.sections[square.sections.length - 1].name
+                    output += name ? name[0] : 'x'
+                } else {
+                    output += ' '
+                }
             }
             output += '\n'
         }
@@ -107,3 +128,13 @@ class Layout {
 }
 
 module.exports = Layout
+
+function bringToFront(array, object) {
+    array.splice(array.indexOf(object))
+    array.unshift(object)
+}
+
+function sendToBack(array, object) {
+    array.splice(array.indexOf(object))
+    array.push(object)
+}

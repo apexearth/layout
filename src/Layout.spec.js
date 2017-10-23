@@ -2,6 +2,7 @@ const {expect} = require('chai')
 const Layout   = require('./Layout')
 
 describe('Layout', () => {
+
     it('basics', () => {
         let layout = new Layout()
 
@@ -99,8 +100,9 @@ describe('Layout', () => {
         expect(layout.toString()).to.equal(
             ''
         )
-
-        layout = new Layout({autoShrink: false})
+    })
+    it('autoShrink: false', () => {
+        let layout = new Layout({autoShrink: false})
         layout.addSection(3, 3, 3, 6)
         layout.deleteAllSections()
         expect(layout.size).to.equal(4)
@@ -125,6 +127,31 @@ describe('Layout', () => {
             'x  \n'
         )
     })
-
+    it('section names, bringToFront, sendToBack', () => {
+        let layout = new Layout()
+        layout.addSection(0, 0, 0, 0, 'box')
+        expect(layout.sections[0].name).to.equal('box')
+        expect(layout.toString()).to.equal(
+            'b\n'
+        )
+        layout.addSection(-1, -1, 1, 1, 'wrapper')
+        expect(layout.toString()).to.equal(
+            'www\n' +
+            'www\n' +
+            'www\n'
+        )
+        layout.sections[1].bringToFront()
+        expect(layout.toString()).to.equal(
+            'www\n' +
+            'wbw\n' +
+            'www\n'
+        )
+        layout.sections[0].sendToBack()
+        expect(layout.toString()).to.equal(
+            'www\n' +
+            'www\n' +
+            'www\n'
+        )
+    })
 
 })
