@@ -127,7 +127,7 @@ describe('Layout', () => {
             'x  \n'
         )
     })
-    it('section names, bringToFront, sendToBack', () => {
+    it('section names, bringToFront, sendToBack, move', () => {
         let layout = new Layout()
         layout.addSection(0, 0, 0, 0, 'box')
         expect(layout.sections[0].name).to.equal('box')
@@ -163,6 +163,42 @@ describe('Layout', () => {
             ' bww\n' +
             ' www\n'
         )
+        layout.sections[1].move(-1, 0)
+        expect(layout.toString()).to.equal(
+            ' www\n' +
+            'bwww\n' +
+            ' www\n'
+        )
+    })
+
+    describe("practical applications", () => {
+        it('tv room layout', () => {
+            let room = new Layout()
+            room.addSection(0, 0, 10, 10, 'floor')
+            room.addSection(3, 0, 7, 1, 'couch')
+            room.addSection(0, 0, 1, 1, 'lamp')
+            room.addSection(9, 0, 10, 1, 'lamp')
+            room.addSection(3, 4, 7, 6, 'table')
+            room.addSection(4, 5, 4, 5, 'coffee')
+            room.addSection(2, 9, 8, 10, 'television')
+            room.addSection(0, 10, 0, 10, 'speaker')
+            room.addSection(10, 10, 10, 10, 'speaker')
+            room.addSection(0, 0, 0, 0, 'speaker')
+            room.addSection(10, 0, 10, 0, 'speaker')
+            expect(room.toString()).to.equal(
+                'slfcccccfls\n' +
+                'llfcccccfll\n' +
+                'fffffffffff\n' +
+                'fffffffffff\n' +
+                'ffftttttfff\n' +
+                'ffftctttfff\n' +
+                'ffftttttfff\n' +
+                'fffffffffff\n' +
+                'fffffffffff\n' +
+                'fftttttttff\n' +
+                'sftttttttfs\n'
+            )
+        })
     })
 
 })

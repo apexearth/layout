@@ -36,7 +36,6 @@ class Section {
                         }
                     }
                     square.sections.splice(insertionIndex, 0, this)
-                    console.log(insertionIndex)
                 } else {
                     square.sections.push(this)
                 }
