@@ -4,7 +4,7 @@
   "description": "A package to manage the creation and usage of layouts like two-dimensional floor plans, maps, etc, using a grid.",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha src/**/*.spec.js"
+    "test": "eslint . && mocha src/**/*.spec.js"
   },
   "author": {
     "name": "Christopher Jacobs",

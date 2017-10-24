@@ -1,3 +1,5 @@
+const Section = require('./Section')
+
 class Layout {
     constructor({autoShrink = true} = {}) {
         this.autoShrink = autoShrink
@@ -41,37 +43,13 @@ class Layout {
     addSection(left, top, right, bottom, name) {
         if (left > right) throw new Error('Left can not be greater than right.')
         if (top > bottom) throw new Error('Top can not be greater than Bottom.')
-        let section = {
-            layout : this,
+        let section = new Section({
+            layout: this,
             name,
             left, top, right, bottom,
-            squares: [],
-            bringToFront() {
-                bringToFront(this.layout.sections, this)
-                this.squares.forEach(square => {
-                    bringToFront(square.sections, this)
-                })
-            },
-            sendToBack() {
-                sendToBack(this.layout.sections, this)
-                this.squares.forEach(square => {
-                    sendToBack(square.sections, this)
-                })
-            }
-        }
+        })
         this.sections.push(section)
         this.updateBounds(section)
-        for (let x = left; x <= right; x++) {
-            for (let y = top; y <= bottom; y++) {
-                let square = this.grid[`${x},${y}`] || {
-                    x, y,
-                    sections: []
-                }
-                square.sections.push(section)
-                section.squares.push(square)
-                this.grid[`${x},${y}`] = square
-            }
-        }
         return section
     }
 
@@ -104,8 +82,19 @@ class Layout {
         this.updateBounds()
     }
 
-    square(x, y) {
-        return this.grid[`${x},${y}`]
+    square(x, y, create) {
+        if (create) {
+            return this.grid[`${x},${y}`] || (this.grid[`${x},${y}`] = {
+                layout  : this,
+                x, y,
+                sections: [],
+                remove() {
+                    delete this.layout.grid[`${x},${y}`]
+                }
+            })
+        } else {
+            return this.grid[`${x},${y}`]
+        }
     }
 
     toString() {
@@ -128,13 +117,3 @@ class Layout {
 }
 
 module.exports = Layout
-
-function bringToFront(array, object) {
-    array.splice(array.indexOf(object))
-    array.unshift(object)
-}
-
-function sendToBack(array, object) {
-    array.splice(array.indexOf(object))
-    array.push(object)
-}

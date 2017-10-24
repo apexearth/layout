@@ -135,22 +135,33 @@ describe('Layout', () => {
             'b\n'
         )
         layout.addSection(-1, -1, 1, 1, 'wrapper')
+        expect(layout.sections.length).to.equal(2)
         expect(layout.toString()).to.equal(
             'www\n' +
             'www\n' +
             'www\n'
         )
         layout.sections[1].bringToFront()
+        expect(layout.sections.length).to.equal(2)
         expect(layout.toString()).to.equal(
             'www\n' +
             'wbw\n' +
             'www\n'
         )
         layout.sections[0].sendToBack()
+        expect(layout.sections.length).to.equal(2)
         expect(layout.toString()).to.equal(
             'www\n' +
             'www\n' +
             'www\n'
+        )
+        layout.sections[0].sendToBack()
+        expect(layout.sections.length).to.equal(2)
+        layout.sections[0].move(0, -1)
+        expect(layout.toString()).to.equal(
+            ' www\n' +
+            ' bww\n' +
+            ' www\n'
         )
     })
 
