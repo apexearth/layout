@@ -1,7 +1,7 @@
 class Section {
     constructor({
-                    layout, name, left, top, right, bottom
-                }) {
+        layout, name, left, top, right, bottom
+    }) {
 
         this.layout  = layout
         this.name    = name
