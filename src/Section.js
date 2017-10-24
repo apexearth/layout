@@ -68,6 +68,12 @@ class Section {
         this.removeAllSquares()
         this.addAllSquares()
     }
+
+    addRight({name, width, height}) {
+        let x = this.right + 1
+        let y = this.top - height + 1
+
+    }
 }
 
 function bringToFront(array, object) {

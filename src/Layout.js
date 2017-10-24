@@ -114,6 +114,13 @@ class Layout {
         return output
     }
 
+    add({left, top, right, bottom, x, y, width, height, name}) {
+        left   = left || x
+        right  = right || (x + width)
+        top    = top || y
+        bottom = bottom || (y + height)
+        return this.addSection(left, top, right, bottom, name)
+    }
 }
 
 module.exports = Layout

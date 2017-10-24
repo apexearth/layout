@@ -199,6 +199,43 @@ describe('Layout', () => {
                 'sftttttttfs\n'
             )
         })
+        it('one floor home', () => {
+            let home       = new Layout()
+            let livingRoom = home.add({
+                name  : 'Living Room',
+                width : 5,
+                height: 5
+            })
+            let hallway    = livingRoom
+                .addRight({
+                    name  : 'Hallway',
+                    width : 1,
+                    height: 6
+                })
+            let bathroom1  = hallway.addRight({
+                name  : 'Bathroom',
+                width : 2,
+                height: 2
+            })
+            let bedRoom    = hallway.addTop({
+                name  : 'Bedroom',
+                width : 4,
+                height: 5,
+            })
+            let bathroom2  = bedRoom.addLeft({
+                name  : 'Bathroom',
+                width : 2,
+                height: 2
+            })
+            let kitchen    = hallway.addRight({
+                name  : 'Kitchen',
+                width : 4,
+                height: 4
+            })
+            expect(home.toString()).to.equal(
+                ''
+            )
+        })
     })
 
 })
