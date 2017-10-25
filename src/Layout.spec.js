@@ -4,7 +4,7 @@ const Layout   = require('./Layout')
 describe('Layout', () => {
 
     it('basics', () => {
-        let layout = new Layout()
+        let layout = new Layout({overlap: true})
 
         layout.addSection(0, 0, 2, 2)
         expect(layout.bounds).to.deep.equal({
@@ -41,7 +41,7 @@ describe('Layout', () => {
          * The image is actually based on connectors.
          * A 1 by 1 section shows 2 by 2 x's because each corner is a connector.
          */
-        layout = new Layout()
+        layout = new Layout({overlap: true})
         layout.addSection(-1, -1, 1, 1)
         expect(layout.toString()).to.equal(
             'xxx\n' +
@@ -128,7 +128,7 @@ describe('Layout', () => {
         )
     })
     it('section names, bringToFront, sendToBack, move', () => {
-        let layout = new Layout()
+        let layout = new Layout({overlap: true})
         layout.addSection(0, 0, 0, 0, 'box')
         expect(layout.sections[0].name).to.equal('box')
         expect(layout.toString()).to.equal(
@@ -173,7 +173,7 @@ describe('Layout', () => {
 
     describe("practical applications", () => {
         it('tv room layout', () => {
-            let room = new Layout()
+            let room = new Layout({overlap: true})
             room.addSection(0, 0, 10, 10, 'floor')
             room.addSection(3, 0, 7, 1, 'couch')
             room.addSection(0, 0, 1, 1, 'lamp')
@@ -212,31 +212,55 @@ describe('Layout', () => {
                     width : 1,
                     height: 5
                 })
-            let bathroom1  = hallway.addRight({
+            expect(livingRoom.rightSections.length).to.equal(1)
+            expect(livingRoom.rightSections[0]).to.equal(hallway)
+            expect(hallway.leftSections.length).to.equal(1)
+            expect(hallway.leftSections[0]).to.equal(livingRoom)
+            let bathroom1 = hallway.addRight({
                 name  : 'Bathroom',
                 width : 2,
                 height: 2
             })
-            let bedRoom    = hallway.addTop({
+            expect(hallway.rightSections.length).to.equal(1)
+            expect(hallway.rightSections[0]).to.equal(bathroom1)
+            expect(bathroom1.leftSections.length).to.equal(1)
+            expect(bathroom1.leftSections[0]).to.equal(hallway)
+            let bedRoom   = hallway.addTop({
                 name  : 'Bedroom',
                 width : 5,
                 height: 4,
             })
-            let bathroom2  = bedRoom.addLeft({
+            expect(hallway.topSections.length).to.equal(1)
+            expect(hallway.topSections[0]).to.equal(bedRoom)
+            expect(bedRoom.bottomSections.length).to.equal(1)
+            expect(bedRoom.bottomSections[0]).to.equal(hallway)
+            let bathroom2 = bedRoom.addLeft({
                 name  : 'Bathroom',
                 width : 2,
                 height: 2
             })
-            let kitchen    = hallway.addRight({
+            expect(bedRoom.leftSections.length).to.equal(1)
+            expect(bedRoom.leftSections[0]).to.equal(bathroom2)
+            expect(bathroom2.rightSections.length).to.equal(1)
+            expect(bathroom2.rightSections[0]).to.equal(bedRoom)
+            let kitchen   = hallway.addRight({
                 name  : 'Kitchen',
                 width : 4,
                 height: 4
             })
-            let frontDoor  = hallway.addBottom({
+            expect(hallway.rightSections.length).to.equal(2)
+            expect(hallway.rightSections[1]).to.equal(kitchen)
+            expect(kitchen.leftSections.length).to.equal(1)
+            expect(kitchen.leftSections[0]).to.equal(hallway)
+            let frontDoor = hallway.addBottom({
                 name  : 'Front Door',
                 width : 1,
                 height: 1
             })
+            expect(frontDoor.topSections.length).to.equal(1)
+            expect(frontDoor.topSections[0]).to.equal(hallway)
+            expect(hallway.bottomSections.length).to.equal(1)
+            expect(hallway.bottomSections[0]).to.equal(frontDoor)
             expect(home.toString()).to.equal(
                 '   BBBBBBB\n' +
                 '   BBBBBBB\n' +
@@ -248,6 +272,23 @@ describe('Layout', () => {
                 'LLLLLHKKKK\n' +
                 'LLLLLHKKKK\n' +
                 '     FKKKK\n'
+            )
+            hallway.addLeft({
+                name  : 'Study',
+                width : 5,
+                height: 3
+            })
+            expect(home.toString()).to.equal(
+                '   BBBBBBB\n' +
+                '   BBBBBBB\n' +
+                'SSSSSBBBBB\n' +
+                'SSSSSBBBBB\n' +
+                'SSSSSHBB  \n' +
+                'LLLLLHBB  \n' +
+                'LLLLLHKKKK\n' +
+                'LLLLLHKKKK\n' +
+                'LLLLLHKKKK\n' +
+                'LLLLLFKKKK\n'
             )
         })
     })

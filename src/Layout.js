@@ -1,8 +1,12 @@
 const Section = require('./Section')
 
 class Layout {
-    constructor({autoShrink = true} = {}) {
+    constructor({
+        autoShrink = true,
+        overlap = false
+    } = {}) {
         this.autoShrink = autoShrink
+        this.overlap    = overlap
         this.bounds     = {
             left  : undefined,
             right : undefined,
