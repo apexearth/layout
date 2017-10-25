@@ -76,25 +76,40 @@ class Section {
         while (this.layout.square(x, y) && y < ylimit) {
             y++
         }
-        if(y > ylimit) throw new Error(`No space available to add ${name} to the left of ${this.name}.`)
+        if(y > ylimit) throw new Error(`No space available to add ${name} to the right of ${this.name}.`)
         return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
     }
 
     addTop({name, width, height}) {
         let x = this.left
         let y = this.top - height
+        let xlimit = this.right
+        while (this.layout.square(x, y) && y < xlimit) {
+            x++
+        }
+        if(x > xlimit) throw new Error(`No space available to add ${name} to the top of ${this.name}.`)
         return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
     }
 
     addLeft({name, width, height}) {
         let x = this.left - width
         let y = this.top
+        let ylimit = this.bottom
+        while (this.layout.square(x, y) && y < ylimit) {
+            y++
+        }
+        if(y > ylimit) throw new Error(`No space available to add ${name} to the left of ${this.name}.`)
         return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
     }
 
     addBottom({name, width, height}) {
         let x = this.left
         let y = this.bottom + 1
+        let xlimit = this.right
+        while (this.layout.square(x, y) && y < xlimit) {
+            x++
+        }
+        if(x > xlimit) throw new Error(`No space available to add ${name} to the bottom of ${this.name}.`)
         return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
     }
 }
