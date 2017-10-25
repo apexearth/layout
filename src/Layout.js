@@ -115,10 +115,10 @@ class Layout {
     }
 
     add({left, top, right, bottom, x, y, width, height, name}) {
-        left   = left || x
-        right  = right || (x + width)
-        top    = top || y
-        bottom = bottom || (y + height)
+        left   = left || (x || 0)
+        right  = right || ((x || 0) + width - 1)
+        top    = top || (y || 0)
+        bottom = bottom || ((y || 0) + height - 1)
         return this.addSection(left, top, right, bottom, name)
     }
 }

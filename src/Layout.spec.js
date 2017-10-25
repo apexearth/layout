@@ -199,7 +199,7 @@ describe('Layout', () => {
                 'sftttttttfs\n'
             )
         })
-        it('one floor home', () => {
+        it('one floor home, using add directions', () => {
             let home       = new Layout()
             let livingRoom = home.add({
                 name  : 'Living Room',
@@ -210,7 +210,7 @@ describe('Layout', () => {
                 .addRight({
                     name  : 'Hallway',
                     width : 1,
-                    height: 6
+                    height: 5
                 })
             let bathroom1  = hallway.addRight({
                 name  : 'Bathroom',
@@ -219,8 +219,8 @@ describe('Layout', () => {
             })
             let bedRoom    = hallway.addTop({
                 name  : 'Bedroom',
-                width : 4,
-                height: 5,
+                width : 5,
+                height: 4,
             })
             let bathroom2  = bedRoom.addLeft({
                 name  : 'Bathroom',
@@ -232,8 +232,22 @@ describe('Layout', () => {
                 width : 4,
                 height: 4
             })
+            let frontDoor  = hallway.addBottom({
+                name  : 'Front Door',
+                width : 1,
+                height: 1
+            })
             expect(home.toString()).to.equal(
-                ''
+                '   BBBBBBB\n' +
+                '   BBBBBBB\n' +
+                '     BBBBB\n' +
+                '     BBBBB\n' +
+                'LLLLLHBB  \n' +
+                'LLLLLHBB  \n' +
+                'LLLLLHKKKK\n' +
+                'LLLLLHKKKK\n' +
+                'LLLLLHKKKK\n' +
+                '     FKKKK\n'
             )
         })
     })

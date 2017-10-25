@@ -70,9 +70,32 @@ class Section {
     }
 
     addRight({name, width, height}) {
-        let x = this.right + 1
-        let y = this.top - height + 1
+        let x      = this.right + 1
+        let y      = this.top
+        let ylimit = this.bottom
+        while (this.layout.square(x, y) && y < ylimit) {
+            y++
+        }
+        if(y > ylimit) throw new Error(`No space available to add ${name} to the left of ${this.name}.`)
+        return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+    }
 
+    addTop({name, width, height}) {
+        let x = this.left
+        let y = this.top - height
+        return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+    }
+
+    addLeft({name, width, height}) {
+        let x = this.left - width
+        let y = this.top
+        return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+    }
+
+    addBottom({name, width, height}) {
+        let x = this.left
+        let y = this.bottom + 1
+        return this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
     }
 }
 
