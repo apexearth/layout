@@ -67,6 +67,21 @@ class Section {
         }
     }
 
+    _remove() {
+        this.leftSections.forEach(section => remove(section.rightSections, this))
+        this.leftSections.splice(0)
+        this.rightSections.forEach(section => remove(section.leftSections, this))
+        this.rightSections.splice(0)
+        this.topSections.forEach(section => remove(section.bottomSections, this))
+        this.topSections.splice(0)
+        this.bottomSections.forEach(section => remove(section.topSections, this))
+        this.bottomSections.splice(0)
+    }
+
+    remove() {
+        this.layout.removeSection(this)
+    }
+
     removeAllSquares() {
         while (this.squares.length) {
             let square = this.squares[this.squares.length - 1]

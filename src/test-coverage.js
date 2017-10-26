@@ -1,4 +1,11 @@
-module.exports = function (suite, obj, ignores) {
+const {expect} = require('chai')
+
+module.exports = {
+    coverage,
+    field
+}
+
+function coverage(suite, obj, ignores) {
     if (typeof suite !== 'object') throw new Error('suite is required')
     if (typeof obj === 'undefined') throw new Error('obj cannot be undefined')
     ignores = ignores || []
@@ -18,23 +25,23 @@ module.exports = function (suite, obj, ignores) {
         for (let key of keys) {
             if (ignores.indexOf(key) >= 0) continue
             if (typeof object[key] === 'function') {
-                if (!hasTest(suite, key)) {
-                    it('.' + key + '()', function () {
-                        throw new Error('.' + this + '() has no test.')
-                    }.bind(key))
+                if (!hasTest(suite, `.${key}()`)) {
+                    it(`.${key}()`)
                 }
+            } else if (!hasTest(suite, `.${key}`)) {
+                it(`.${key}`)
             }
         }
     }
 }
 
-function hasTest(suite, func) {
-    let expectedTestName = '.' + func + '()'
+function hasTest(suite, name) {
+    let expectedTestName = name
     for (let key in suite.suites) {
         if (suite.suites.hasOwnProperty(key)
             && (
                 suite.suites[key].title === expectedTestName ||
-                hasTest(suite.suites[key], func)
+                hasTest(suite.suites[key], name)
             )) {
             return true
         }
@@ -45,4 +52,14 @@ function hasTest(suite, func) {
         }
     }
     return false
+}
+
+function field(object, name, value) {
+    it(`.${name}`, () => {
+        if (value) {
+            expect(object[name]).to.equal(value)
+        } else {
+            expect(object[name]).to.exist
+        }
+    })
 }

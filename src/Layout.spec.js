@@ -1,178 +1,326 @@
-const coverage = require('./test-coverage')
-const {expect} = require('chai')
-const Layout   = require('./Layout')
+const {coverage, field} = require('./test-coverage')
+const {expect}          = require('chai')
+const Layout            = require('./Layout')
 
 describe('Layout', function () {
-    coverage(this, new Layout())
 
-    it('basics', () => {
-        let layout = new Layout({overlap: true})
+    field(new Layout(), 'autoShrink', true)
+    field(new Layout(), 'overlap', false)
+    field(new Layout(), 'bounds')
+    field(new Layout(), 'size', 0)
+    field(new Layout(), 'sections')
+    field(new Layout(), 'grid')
 
-        layout.addSection(0, 0, 2, 2)
-        expect(layout.bounds).to.deep.equal({
-            left: 0, top: 0, right: 2, bottom: 2
-        })
-
-        layout.addSection(-2, -2, 0, 0)
-        expect(layout.bounds).to.deep.equal({
-            left: -2, top: -2, right: 2, bottom: 2
-        })
-
-        // Left is greater than right should throw.
-        expect(() => {
-            layout.addSection(2, 2, 0, 2)
-        }).to.throw()
-
-        // Top is greater than bottom should throw.
-        expect(() => {
-            layout.addSection(2, 2, 2, 0)
-        }).to.throw()
-
-        expect(layout.square(0, 0).x).to.equal(0)
-        expect(layout.square(0, 0).y).to.equal(0)
-        expect(layout.square(1, 1).x).to.equal(1)
-        expect(layout.square(1, 1).y).to.equal(1)
-        expect(layout.square(10, 10)).to.equal(undefined)
-
-        expect(layout.square(0, 0).sections.length).to.equal(2)
-        expect(layout.square(0, 1).sections.length).to.equal(1)
-        expect(layout.square(0, -1).sections.length).to.equal(1)
-        expect(layout.square(0, -1).sections[0]).to.not.equal(layout.square(0, 1).sections[0])
-
-        /**
-         * The image is actually based on connectors.
-         * A 1 by 1 section shows 2 by 2 x's because each corner is a connector.
-         */
-        layout = new Layout({overlap: true})
-        layout.addSection(-1, -1, 1, 1)
-        expect(layout.toString()).to.equal(
-            'xxx\n' +
-            'xxx\n' +
-            'xxx\n'
-        )
-        expect(layout.size).to.equal(9)
-        expect(layout.bounds).to.deep.equal({
-            left: -1, top: -1, right: 1, bottom: 1
-        })
-
-        layout.addSection(-2, 0, 2, 0)
-        expect(layout.size).to.equal(15)
-        expect(layout.bounds).to.deep.equal({
-            left: -2, top: -1, right: 2, bottom: 1
-        })
-        expect(layout.toString()).to.equal(
-            ' xxx \n' +
-            'xxxxx\n' +
-            ' xxx \n'
-        )
-
-        layout.addSection(3, 3, 3, 6)
-        expect(layout.size).to.equal(48)
-        expect(layout.bounds).to.deep.equal({
-            left: -2, top: -1, right: 3, bottom: 6
-        })
-        expect(layout.toString()).to.equal(
-            ' xxx  \n' +
-            'xxxxx \n' +
-            ' xxx  \n' +
-            '      \n' +
-            '     x\n' +
-            '     x\n' +
-            '     x\n' +
-            '     x\n'
-        )
-
-        layout.deleteSections(0, 0) // Delete sections overlapping this location
-        expect(layout.size).to.equal(4)
-        expect(layout.bounds).to.deep.equal({
-            left: 3, top: 3, right: 3, bottom: 6
-        })
-        expect(layout.toString()).to.equal(
-            'x\n' +
-            'x\n' +
-            'x\n' +
-            'x\n'
-        )
-
-        layout.deleteAllSections()
-        expect(layout.size).to.equal(0)
-        expect(layout.bounds).to.deep.equal({
-            left: undefined, top: undefined, right: undefined, bottom: undefined
-        })
-        expect(layout.toString()).to.equal(
-            ''
-        )
-    })
-    it('autoShrink: false', () => {
+    it('.updateBounds()', () => {
         let layout = new Layout({autoShrink: false})
-        layout.addSection(3, 3, 3, 6)
-        layout.deleteAllSections()
+        layout.sections.push({
+            left: 1, top: 1, bottom: 2, right: 2
+        })
+        layout.updateBounds()
         expect(layout.size).to.equal(4)
         expect(layout.bounds).to.deep.equal({
-            left: 3, top: 3, right: 3, bottom: 6
+            left: 1, top: 1, bottom: 2, right: 2
         })
-        expect(layout.toString()).to.equal(
-            ' \n' +
-            ' \n' +
-            ' \n' +
-            ' \n'
-        )
-        layout.addSection(1, 3, 1, 6)
+
+        layout.sections.push({
+            left: -1, top: 0, bottom: 2, right: 2
+        })
+        layout.updateBounds()
         expect(layout.size).to.equal(12)
         expect(layout.bounds).to.deep.equal({
-            left: 1, top: 3, right: 3, bottom: 6
+            left: -1, top: 0, bottom: 2, right: 2
+        })
+
+        layout.sections.splice(0)
+        layout.updateBounds()
+        expect(layout.size).to.equal(12)
+        expect(layout.bounds).to.deep.equal({
+            left: -1, top: 0, bottom: 2, right: 2
+        })
+
+        layout.autoShrink = true
+        layout.updateBounds()
+        expect(layout.size).to.equal(0)
+        expect(layout.bounds).to.deep.equal({
+            left  : undefined,
+            right : undefined,
+            top   : undefined,
+            bottom: undefined,
+        })
+    })
+
+    it('.updateBoundsForSection()', () => {
+        let layout = new Layout()
+
+        // Only works if these are set as is done in .updateBounds().
+        layout.bounds.left   = Number.MAX_SAFE_INTEGER
+        layout.bounds.right  = Number.MIN_SAFE_INTEGER
+        layout.bounds.top    = Number.MAX_SAFE_INTEGER
+        layout.bounds.bottom = Number.MIN_SAFE_INTEGER
+
+        let section = {
+            left: 1, top: 1, bottom: 2, right: 2
+        }
+        layout.updateBoundsForSection(section)
+        expect(layout.size).to.equal(4)
+        expect(layout.bounds).to.deep.equal({
+            left: 1, top: 1, bottom: 2, right: 2
+        })
+    })
+    it('.add()', () => {
+        let layout  = new Layout()
+        let section = layout.add({left: 1, right: 5, top: 1, bottom: 5, name: 'pop'})
+        expect(section.name).to.equal('pop')
+        expect(section.left).to.equal(1)
+        expect(section.top).to.equal(1)
+        expect(section.right).to.equal(5)
+        expect(section.bottom).to.equal(5)
+        expect(layout.size).to.equal(25)
+        expect(layout.bounds).to.deep.equal({
+            left: 1, top: 1, bottom: 5, right: 5
+        })
+    })
+    it('.addSection()', () => {
+        let layout   = new Layout()
+        let section1 = layout.addSection(0, 0, 0, 0, 'a')
+        let section2 = layout.addSection(1, 0, 1, 0, 'b')
+        expect(layout.size).to.equal(2)
+        expect(layout.bounds).to.deep.equal({
+            left: 0, top: 0, right: 1, bottom: 0
         })
         expect(layout.toString()).to.equal(
-            'x  \n' +
-            'x  \n' +
-            'x  \n' +
-            'x  \n'
+            'ab\n'
         )
+        layout.removeSection(section1)
+        layout.removeSection(section2)
     })
-    it('section names, bringToFront, sendToBack, move', () => {
-        let layout = new Layout({overlap: true})
-        layout.addSection(0, 0, 0, 0, 'box')
-        expect(layout.sections[0].name).to.equal('box')
+    it('.deleteSection()', () => {
+        let layout   = new Layout()
+        let section1 = layout.addSection(0, 0, 0, 0, 'a')
+        let section2 = layout.addSection(1, 0, 1, 0, 'b')
+        layout.deleteSection(section1)
         expect(layout.toString()).to.equal(
             'b\n'
         )
-        layout.addSection(-1, -1, 1, 1, 'wrapper')
-        expect(layout.sections.length).to.equal(2)
+        let left   = section2.addLeft({width: 1, height: 1})
+        let top    = section2.addTop({width: 1, height: 1})
+        let right  = section2.addRight({width: 1, height: 1})
+        let bottom = section2.addBottom({width: 1, height: 1})
+        layout.deleteSection(section2)
+
+        // All adjacent section information should have section2 removed.
+        expect(section2.leftSections.length).to.equal(0)
+        expect(section2.topSections.length).to.equal(0)
+        expect(section2.rightSections.length).to.equal(0)
+        expect(section2.bottomSections.length).to.equal(0)
+        expect(left.rightSections.length).to.equal(0)
+        expect(top.bottomSections.length).to.equal(0)
+        expect(right.leftSections.length).to.equal(0)
+        expect(bottom.topSections.length).to.equal(0)
+    })
+    it('.removeSection()', () => {
+        let layout   = new Layout()
+        let section1 = layout.addSection(0, 0, 0, 0, 'a')
+        let section2 = layout.addSection(1, 0, 1, 0, 'b')
+        layout.removeSection(section1)
         expect(layout.toString()).to.equal(
-            'www\n' +
-            'www\n' +
-            'www\n'
-        )
-        layout.sections[1].bringToFront()
-        expect(layout.sections.length).to.equal(2)
-        expect(layout.toString()).to.equal(
-            'www\n' +
-            'wbw\n' +
-            'www\n'
-        )
-        layout.sections[0].sendToBack()
-        expect(layout.sections.length).to.equal(2)
-        expect(layout.toString()).to.equal(
-            'www\n' +
-            'www\n' +
-            'www\n'
-        )
-        layout.sections[0].sendToBack()
-        expect(layout.sections.length).to.equal(2)
-        layout.sections[0].move(0, -1)
-        expect(layout.toString()).to.equal(
-            ' www\n' +
-            ' bww\n' +
-            ' www\n'
-        )
-        layout.sections[1].move(-1, 0)
-        expect(layout.toString()).to.equal(
-            ' www\n' +
-            'bwww\n' +
-            ' www\n'
+            'b\n'
         )
     })
+    it('.deleteSections()', () => {
+        let layout = new Layout()
+        layout.addSection(0, 0, 0, 0, 'a')
+        let section = layout.addSection(1, 0, 1, 0, 'b')
+        layout.deleteSections(0, 0)
+        expect(layout.sections.length).to.equal(1)
+        expect(layout.sections[0]).to.equal(section)
+    })
+    it('.deleteAllSections()', () => {
+        let layout = new Layout()
+        layout.addSection(0, 0, 0, 0, 'a')
+        layout.addSection(1, 0, 1, 0, 'b')
+        layout.deleteAllSections()
+        expect(layout.sections.length).to.equal(0)
+    })
+    it('.square()', () => {
+        let layout   = new Layout()
+        let section1 = layout.addSection(0, 0, 0, 0, 'beans')
+        layout.addSection(1, 1, 1, 1, 'beans')
+        let square = layout.square(0, 0)
+        expect(square.sections.length).to.equal(1)
+        expect(square.sections[0]).to.equal(section1)
+        expect(square.sections[0].squares[0]).to.equal(square)
+    })
 
+    describe('usage', () => {
+        it('autoShrink: false', () => {
+            let layout = new Layout({autoShrink: false})
+            layout.addSection(3, 3, 3, 6)
+            layout.deleteAllSections()
+            expect(layout.size).to.equal(4)
+            expect(layout.bounds).to.deep.equal({
+                left: 3, top: 3, right: 3, bottom: 6
+            })
+            expect(layout.toString()).to.equal(
+                ' \n' +
+                ' \n' +
+                ' \n' +
+                ' \n'
+            )
+            layout.addSection(1, 3, 1, 6)
+            expect(layout.size).to.equal(12)
+            expect(layout.bounds).to.deep.equal({
+                left: 1, top: 3, right: 3, bottom: 6
+            })
+            expect(layout.toString()).to.equal(
+                'x  \n' +
+                'x  \n' +
+                'x  \n' +
+                'x  \n'
+            )
+        })
+        it('section names, bringToFront, sendToBack, move', () => {
+            let layout = new Layout({overlap: true})
+            layout.addSection(0, 0, 0, 0, 'box')
+            expect(layout.sections[0].name).to.equal('box')
+            expect(layout.toString()).to.equal(
+                'b\n'
+            )
+            layout.addSection(-1, -1, 1, 1, 'wrapper')
+            expect(layout.sections.length).to.equal(2)
+            expect(layout.toString()).to.equal(
+                'www\n' +
+                'www\n' +
+                'www\n'
+            )
+            layout.sections[1].bringToFront()
+            expect(layout.sections.length).to.equal(2)
+            expect(layout.toString()).to.equal(
+                'www\n' +
+                'wbw\n' +
+                'www\n'
+            )
+            layout.sections[0].sendToBack()
+            expect(layout.sections.length).to.equal(2)
+            expect(layout.toString()).to.equal(
+                'www\n' +
+                'www\n' +
+                'www\n'
+            )
+            layout.sections[0].sendToBack()
+            expect(layout.sections.length).to.equal(2)
+            layout.sections[0].move(0, -1)
+            expect(layout.toString()).to.equal(
+                ' www\n' +
+                ' bww\n' +
+                ' www\n'
+            )
+            layout.sections[1].move(-1, 0)
+            expect(layout.toString()).to.equal(
+                ' www\n' +
+                'bwww\n' +
+                ' www\n'
+            )
+        })
+        it('basics', function () {
+            let layout = new Layout({overlap: true})
+
+            layout.addSection(0, 0, 2, 2)
+            expect(layout.bounds).to.deep.equal({
+                left: 0, top: 0, right: 2, bottom: 2
+            })
+
+            layout.addSection(-2, -2, 0, 0)
+            expect(layout.bounds).to.deep.equal({
+                left: -2, top: -2, right: 2, bottom: 2
+            })
+
+            // Left is greater than right should throw.
+            expect(() => {
+                layout.addSection(2, 2, 0, 2)
+            }).to.throw()
+
+            // Top is greater than bottom should throw.
+            expect(() => {
+                layout.addSection(2, 2, 2, 0)
+            }).to.throw()
+
+            expect(layout.square(0, 0).x).to.equal(0)
+            expect(layout.square(0, 0).y).to.equal(0)
+            expect(layout.square(1, 1).x).to.equal(1)
+            expect(layout.square(1, 1).y).to.equal(1)
+            expect(layout.square(10, 10)).to.equal(undefined)
+
+            expect(layout.square(0, 0).sections.length).to.equal(2)
+            expect(layout.square(0, 1).sections.length).to.equal(1)
+            expect(layout.square(0, -1).sections.length).to.equal(1)
+            expect(layout.square(0, -1).sections[0]).to.not.equal(layout.square(0, 1).sections[0])
+
+            /**
+             * The image is actually based on connectors.
+             * A 1 by 1 section shows 2 by 2 x's because each corner is a connector.
+             */
+            layout = new Layout({overlap: true})
+            layout.addSection(-1, -1, 1, 1)
+            expect(layout.toString()).to.equal(
+                'xxx\n' +
+                'xxx\n' +
+                'xxx\n'
+            )
+            expect(layout.size).to.equal(9)
+            expect(layout.bounds).to.deep.equal({
+                left: -1, top: -1, right: 1, bottom: 1
+            })
+
+            layout.addSection(-2, 0, 2, 0)
+            expect(layout.size).to.equal(15)
+            expect(layout.bounds).to.deep.equal({
+                left: -2, top: -1, right: 2, bottom: 1
+            })
+            expect(layout.toString()).to.equal(
+                ' xxx \n' +
+                'xxxxx\n' +
+                ' xxx \n'
+            )
+
+            layout.addSection(3, 3, 3, 6)
+            expect(layout.size).to.equal(48)
+            expect(layout.bounds).to.deep.equal({
+                left: -2, top: -1, right: 3, bottom: 6
+            })
+            expect(layout.toString()).to.equal(
+                ' xxx  \n' +
+                'xxxxx \n' +
+                ' xxx  \n' +
+                '      \n' +
+                '     x\n' +
+                '     x\n' +
+                '     x\n' +
+                '     x\n'
+            )
+
+            layout.deleteSections(0, 0) // Delete sections overlapping this location
+            expect(layout.size).to.equal(4)
+            expect(layout.bounds).to.deep.equal({
+                left: 3, top: 3, right: 3, bottom: 6
+            })
+            expect(layout.toString()).to.equal(
+                'x\n' +
+                'x\n' +
+                'x\n' +
+                'x\n'
+            )
+
+            layout.deleteAllSections()
+            expect(layout.size).to.equal(0)
+            expect(layout.bounds).to.deep.equal({
+                left: undefined, top: undefined, right: undefined, bottom: undefined
+            })
+            expect(layout.toString()).to.equal(
+                ''
+            )
+        })
+    })
     describe("practical applications", () => {
         it('tv room layout', () => {
             let room = new Layout({overlap: true})
@@ -296,6 +444,8 @@ describe('Layout', function () {
                 'LLLLLFKKKK\n'
             )
         })
+        it('traversal')
     })
 
+    coverage(this, new Layout())
 })

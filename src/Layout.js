@@ -83,7 +83,12 @@ class Layout {
             }
         }
         this.sections.splice(this.sections.indexOf(section), 1)
+        section._remove()
         this.updateBounds()
+    }
+
+    removeSection(section) {
+        return this.deleteSection(section)
     }
 
     square(x, y, create) {
