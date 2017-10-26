@@ -225,7 +225,7 @@ describe('Layout', () => {
             expect(hallway.rightSections[0]).to.equal(bathroom1)
             expect(bathroom1.leftSections.length).to.equal(1)
             expect(bathroom1.leftSections[0]).to.equal(hallway)
-            let bedRoom   = hallway.addTop({
+            let bedRoom = hallway.addTop({
                 name  : 'Bedroom',
                 width : 5,
                 height: 4,
@@ -243,8 +243,9 @@ describe('Layout', () => {
             expect(bedRoom.leftSections[0]).to.equal(bathroom2)
             expect(bathroom2.rightSections.length).to.equal(1)
             expect(bathroom2.rightSections[0]).to.equal(bedRoom)
-            let kitchen   = hallway.addRight({
+            let kitchen = hallway.addRight({
                 name  : 'Kitchen',
+                shift : 2,
                 width : 4,
                 height: 4
             })
@@ -273,8 +274,10 @@ describe('Layout', () => {
                 'LLLLLHKKKK\n' +
                 '     FKKKK\n'
             )
+            livingRoom.shift(0, 1)
             hallway.addLeft({
                 name  : 'Study',
+                shift : -2,
                 width : 5,
                 height: 3
             })

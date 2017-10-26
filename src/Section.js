@@ -78,6 +78,10 @@ class Section {
         }
     }
 
+    shift(x, y) {
+        return this.move(this.left + x, this.top + y)
+    }
+
     move(x, y) {
         let differenceX = x - this.left
         let differenceY = y - this.top
@@ -90,56 +94,36 @@ class Section {
         this.addAllSquares()
     }
 
-    addRight({name, width, height}) {
-        let x      = this.right + 1
-        let y      = this.top
-        let ylimit = this.bottom
-        while (this.layout.square(x, y) && y < ylimit) {
-            y++
-        }
-        if (y > ylimit || this.layout.square(x, y)) throw new Error(`No space available to add ${name} to the right of ${this.name}.`)
+    addRight({name, shift = 0, width, height}) {
+        let x       = this.right + 1
+        let y       = this.top + shift
         let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
         add(this.rightSections, section)
         add(section.leftSections, this)
         return section
     }
 
-    addTop({name, width, height}) {
-        let x      = this.left
-        let y      = this.top - height
-        let xlimit = this.right
-        while (this.layout.square(x, y) && y < xlimit) {
-            x++
-        }
-        if (x > xlimit || this.layout.square(x, y)) throw new Error(`No space available to add ${name} to the top of ${this.name}.`)
+    addTop({name, shift = 0, width, height}) {
+        let x       = this.left + shift
+        let y       = this.top - height
         let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
         add(this.topSections, section)
         add(section.bottomSections, this)
         return section
     }
 
-    addLeft({name, width, height}) {
-        let x      = this.left - width
-        let y      = this.top
-        let ylimit = this.bottom
-        while (this.layout.square(x, y) && y < ylimit) {
-            y++
-        }
-        if (y > ylimit || this.layout.square(x, y)) throw new Error(`No space available to add ${name} to the left of ${this.name}.`)
+    addLeft({name, shift = 0, width, height}) {
+        let x       = this.left - width
+        let y       = this.top + shift
         let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
         add(this.leftSections, section)
         add(section.rightSections, this)
         return section
     }
 
-    addBottom({name, width, height}) {
-        let x      = this.left
-        let y      = this.bottom + 1
-        let xlimit = this.right
-        while (this.layout.square(x, y) && y < xlimit) {
-            x++
-        }
-        if (x > xlimit || this.layout.square(x, y)) throw new Error(`No space available to add ${name} to the bottom of ${this.name}.`)
+    addBottom({name, shift = 0, width, height}) {
+        let x       = this.left + shift
+        let y       = this.bottom + 1
         let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
         add(this.bottomSections, section)
         add(section.topSections, this)
