@@ -1,7 +1,9 @@
+const coverage = require('./test-coverage')
 const {expect} = require('chai')
 const Layout   = require('./Layout')
 
-describe('Layout', () => {
+describe('Layout', function () {
+    coverage(this, new Layout())
 
     it('basics', () => {
         let layout = new Layout({overlap: true})
