@@ -2,10 +2,13 @@ language: node_js
 node_js:
 - '8'
 script:
-  - npm test
+- npm test
 deploy:
   provider: npm
-  email: "apexearth@gmail.com"
-  api_key: "${NPM_AUTH_TOKEN}"
+  email: apexearth@gmail.com
+  api_key:
+    secure: NZY2n1O7JNvuDp9SKrMs4xcsri+M+RgYO6aHZsSEu6ioLWS3mlM7nXfULDt24cdiskYsYYLpGOQk+yv3m4GzOSoOE3R6GlHq4NXI1E3T4Uncr37Exzl9wEeJI15D3bdOS1WRppSR6JEQm/4z0a8QWG2eZwKgC9Xg2M+9tGjJ8kPKpDdq3lDg6MjEz621JoQkoCAEGtonMviu5mWuWqYr6vQF9s0JHjetUzVsIKNn5CCU/vuSaWsI2cfhajHgNlzKOEfd4sdvXTIwpVo13CHqvToNNwMqoBdip/Wg8k0Ew9nRYJjbHZhXcXeo98DUzmr2O2WqkXUQb1zbPQHGihPwG4SOeTV6ozP+MNwuC8zuCa3iX5pML+dM9/T5ez5M2oc/foTQrw7+ojDbzSLEJkmtSJKVcSO3c1s8W73hH1pn3rRNwWXsfOHL0+wrEY60prZshlAwtG9wHUVFrGMeszWqVX9qEElSP7Bl+Ys3Bv9gGzULCoHSoE0q5Pk9B6N5/il0sh69pJe4NE5NAGDRAZXA+kFgm0MX3NwkZ2nBEwHxXVaOj3PWBSxiBWES3WOjE1RODKhRqiyJ3F6EYb4JRsJ4BkEm/MLLzcGgxScBpibjXo9XHEBDSpu7LavC3+LzvubNFcjGD6h59cYzTKNzdg7RpDjmVchD09e/b6Wn9YzTk2E=
   on:
+    tags: true
+    repo: apexearth/layout
     branch: master
