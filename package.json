@@ -1,5 +1,5 @@
 {
-  "name": "layout",
+  "name": "@apexearth/layout",
   "version": "0.0.1",
   "description": "A package to manage the creation and usage of layouts like two-dimensional floor plans, maps, etc, using a grid.",
   "main": "src/index.js",
