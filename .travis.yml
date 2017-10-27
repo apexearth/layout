@@ -4,4 +4,10 @@ node_js:
 - '9'
 - '10'
 script:
-- npm test
+  - npm test
+deploy:
+  provider: npm
+  email: "apexearth@gmail.com"
+  api_key: "${NPM_AUTH_TOKEN}"
+  on:
+    branch: master
