@@ -196,7 +196,7 @@ describe('Layout', function () {
             )
         })
         it('section names, bringToFront, sendToBack, move', () => {
-            let layout = new Layout({overlap: true})
+            let layout = new Layout({overlap: true, autoShrink: false})
             layout.addSection(0, 0, 0, 0, 'box')
             expect(layout.sections[0].name).to.equal('box')
             expect(layout.toString()).to.equal(
