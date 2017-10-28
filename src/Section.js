@@ -1,7 +1,8 @@
 class Section {
     constructor({
         layout, name,
-        left, top, right, bottom
+        left, top, right, bottom,
+        data = {}
     }) {
 
         this.layout         = layout
@@ -10,6 +11,7 @@ class Section {
         this.top            = top
         this.right          = right
         this.bottom         = bottom
+        this.data           = Object.assign({}, data)
         this.squares        = []
         this.leftSections   = []
         this.topSections    = []
@@ -26,19 +28,6 @@ class Section {
     sendToBack() {
         sendToBack(this.layout.sections, this)
         this.squares.forEach(square => sendToBack(square.sections, this))
-    }
-
-    checkSquareValidity() {
-        if (this.layout.overlap) return true
-        for (let x = this.left; x <= this.right; x++) {
-            for (let y = this.top; y <= this.bottom; y++) {
-                let square = this.layout.square(x, y, true)
-                if (!this.layout.overlap && square.sections.length) {
-                    return false
-                }
-            }
-        }
-        return true
     }
 
     addAllSquares({addToFront = false} = {}) {
@@ -104,42 +93,42 @@ class Section {
         this.top += differenceY
         this.right += differenceX
         this.bottom += differenceY
-        this.layout.updateBoundsForSection(this)
+        this.layout.updateBounds()
         this.removeAllSquares()
         this.addAllSquares()
     }
 
-    addRight({name, shift = 0, width, height}) {
+    addRight({name, shift = 0, width, height, data}) {
         let x       = this.right + 1
         let y       = this.top + shift
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
         add(this.rightSections, section)
         add(section.leftSections, this)
         return section
     }
 
-    addTop({name, shift = 0, width, height}) {
+    addTop({name, shift = 0, width, height, data}) {
         let x       = this.left + shift
         let y       = this.top - height
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
         add(this.topSections, section)
         add(section.bottomSections, this)
         return section
     }
 
-    addLeft({name, shift = 0, width, height}) {
+    addLeft({name, shift = 0, width, height, data}) {
         let x       = this.left - width
         let y       = this.top + shift
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
         add(this.leftSections, section)
         add(section.rightSections, this)
         return section
     }
 
-    addBottom({name, shift = 0, width, height}) {
+    addBottom({name, shift = 0, width, height, data}) {
         let x       = this.left + shift
         let y       = this.bottom + 1
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
         add(this.bottomSections, section)
         add(section.topSections, this)
         return section
@@ -148,12 +137,12 @@ class Section {
 
 function bringToFront(array, object) {
     remove(array, object)
-    array.unshift(object)
+    array.push(object)
 }
 
 function sendToBack(array, object) {
     remove(array, object)
-    array.push(object)
+    array.unshift(object)
 }
 
 function add(array, object) {

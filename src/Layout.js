@@ -18,6 +18,27 @@ class Layout {
         this.grid       = {}
     }
 
+    get width() {
+        return this.bounds.right - this.bounds.left + 1
+    }
+
+    get height() {
+        return this.bounds.bottom - this.bounds.top + 1
+    }
+
+    forEachSquare(fn) {
+        const {left, right, top, bottom} = this.bounds
+        for (let x = left; x <= right; x++) {
+            for (let y = top; y <= bottom; y++) {
+                let square = this.square(x, y)
+                if (square) {
+                    if (fn(square) === false) return false
+                }
+            }
+        }
+        return true
+    }
+
     updateBounds() {
         if (this.autoShrink || this.size === 0) {
             if (this.sections.length) {
@@ -44,13 +65,14 @@ class Layout {
         this.size          = (1 + this.bounds.right - this.bounds.left) * (1 + this.bounds.bottom - this.bounds.top)
     }
 
-    addSection(left, top, right, bottom, name) {
+    addSection(left, top, right, bottom, name, data) {
         if (left > right) throw new Error('Left can not be greater than right.')
         if (top > bottom) throw new Error('Top can not be greater than Bottom.')
         let section = new Section({
             layout: this,
             name,
             left, top, right, bottom,
+            data
         })
         this.sections.push(section)
         this.updateBounds(section)
@@ -123,12 +145,12 @@ class Layout {
         return output
     }
 
-    add({left, top, right, bottom, x, y, width, height, name}) {
+    add({left, top, right, bottom, x, y, width, height, name, data}) {
         left   = left || (x || 0)
         right  = right || ((x || 0) + width - 1)
         top    = top || (y || 0)
         bottom = bottom || ((y || 0) + height - 1)
-        return this.addSection(left, top, right, bottom, name)
+        return this.addSection(left, top, right, bottom, name, data)
     }
 }
 

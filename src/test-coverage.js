@@ -22,7 +22,7 @@ function coverage(suite, obj, ignores) {
     }
 
     function check(object, keys) {
-        for (let key of keys) {
+        for (let key of keys.filter(key => !key.startsWith('_'))) {
             if (ignores.indexOf(key) >= 0) continue
             if (typeof object[key] === 'function') {
                 if (!hasTest(suite, `.${key}()`)) {

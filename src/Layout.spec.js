@@ -4,13 +4,27 @@ const Layout            = require('./Layout')
 
 describe('Layout', function () {
 
-    field(new Layout(), 'autoShrink', true)
-    field(new Layout(), 'overlap', false)
-    field(new Layout(), 'bounds')
-    field(new Layout(), 'size', 0)
-    field(new Layout(), 'sections')
-    field(new Layout(), 'grid')
+    {
+        let layout = new Layout()
+        layout.addSection(-1, -1, 1, 2)
+        field(layout, 'autoShrink', true)
+        field(layout, 'overlap', false)
+        field(layout, 'bounds')
+        field(layout, 'size', 12)
+        field(layout, 'sections')
+        field(layout, 'grid')
+        field(layout, 'width', 3)
+        field(layout, 'height', 4)
+    }
 
+    it('.forEachSquare()', () => {
+        let layout = new Layout()
+        layout.addSection(0, 0, 2, 0)
+        layout.addSection(0, 1, 1, 2)
+        let count = 0
+        layout.forEachSquare(square => count++)
+        expect(count).to.equal(7)
+    })
     it('.updateBounds()', () => {
         let layout = new Layout({autoShrink: false})
         layout.sections.push({
@@ -48,7 +62,6 @@ describe('Layout', function () {
             bottom: undefined,
         })
     })
-
     it('.updateBoundsForSection()', () => {
         let layout = new Layout()
 
@@ -69,7 +82,7 @@ describe('Layout', function () {
     })
     it('.add()', () => {
         let layout  = new Layout()
-        let section = layout.add({left: 1, right: 5, top: 1, bottom: 5, name: 'pop'})
+        let section = layout.add({left: 1, right: 5, top: 1, bottom: 5, name: 'pop', data: {test: 42}})
         expect(section.name).to.equal('pop')
         expect(section.left).to.equal(1)
         expect(section.top).to.equal(1)
@@ -79,11 +92,12 @@ describe('Layout', function () {
         expect(layout.bounds).to.deep.equal({
             left: 1, top: 1, bottom: 5, right: 5
         })
+        expect(section.data.test).to.equal(42)
     })
     it('.addSection()', () => {
         let layout   = new Layout()
-        let section1 = layout.addSection(0, 0, 0, 0, 'a')
-        let section2 = layout.addSection(1, 0, 1, 0, 'b')
+        let section1 = layout.addSection(0, 0, 0, 0, 'a', {test: 1})
+        let section2 = layout.addSection(1, 0, 1, 0, 'b', {test: 2})
         expect(layout.size).to.equal(2)
         expect(layout.bounds).to.deep.equal({
             left: 0, top: 0, right: 1, bottom: 0
@@ -91,6 +105,8 @@ describe('Layout', function () {
         expect(layout.toString()).to.equal(
             'ab\n'
         )
+        expect(section1.data.test).to.equal(1)
+        expect(section2.data.test).to.equal(2)
         layout.removeSection(section1)
         layout.removeSection(section2)
     })
@@ -193,21 +209,21 @@ describe('Layout', function () {
                 'www\n' +
                 'www\n'
             )
-            layout.sections[1].bringToFront()
+            layout.sections[0].bringToFront()
             expect(layout.sections.length).to.equal(2)
             expect(layout.toString()).to.equal(
                 'www\n' +
                 'wbw\n' +
                 'www\n'
             )
-            layout.sections[0].sendToBack()
+            layout.sections[1].sendToBack()
             expect(layout.sections.length).to.equal(2)
             expect(layout.toString()).to.equal(
                 'www\n' +
                 'www\n' +
                 'www\n'
             )
-            layout.sections[0].sendToBack()
+            layout.sections[1].sendToBack()
             expect(layout.sections.length).to.equal(2)
             layout.sections[0].move(0, -1)
             expect(layout.toString()).to.equal(
@@ -444,8 +460,6 @@ describe('Layout', function () {
                 'LLLLLFKKKK\n'
             )
         })
-        it('traversal')
-
         it('starship!', () => {
             let ship = new Layout()
 
