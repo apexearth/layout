@@ -20,6 +20,14 @@ class Section {
         this.addAllSquares({addToFront: true})
     }
 
+    get width() {
+        return this.right - this.left + 1
+    }
+
+    get height() {
+        return this.bottom - this.top + 1
+    }
+
     bringToFront() {
         bringToFront(this.layout.sections, this)
         this.squares.forEach(square => bringToFront(square.sections, this))
