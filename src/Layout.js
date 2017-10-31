@@ -2,9 +2,9 @@ const Section = require('./Section')
 
 class Layout {
     constructor({
-        autoShrink = true,
-        overlap = false
-    } = {}) {
+                    autoShrink = true,
+                    overlap = false
+                } = {}) {
         this.autoShrink = autoShrink
         this.overlap    = overlap
         this.bounds     = {
@@ -15,7 +15,6 @@ class Layout {
         }
         this.size       = 0
         this.sections   = []
-        this.grid       = {}
     }
 
     get width() {
@@ -24,19 +23,6 @@ class Layout {
 
     get height() {
         return this.bounds.bottom - this.bounds.top + 1
-    }
-
-    forEachSquare(fn) {
-        const {left, right, top, bottom} = this.bounds
-        for (let x = left; x <= right; x++) {
-            for (let y = top; y <= bottom; y++) {
-                let square = this.square(x, y)
-                if (square) {
-                    if (fn(square) === false) return false
-                }
-            }
-        }
-        return true
     }
 
     updateBounds() {
@@ -87,23 +73,15 @@ class Layout {
     }
 
     deleteSections(x, y) {
-        let square = this.square(x, y)
-        while (square.sections.length) {
-            let section = square.sections[square.sections.length - 1]
-            this.deleteSection(section)
+        for (let sectionIndex = this.sections.length - 1; sectionIndex >= 0; sectionIndex--) {
+            let section = this.sections[sectionIndex]
+            if (section.left <= x && section.right >= x && section.top <= y && section.bottom >= y) {
+                this.deleteSection(section)
+            }
         }
     }
 
     deleteSection(section) {
-        let {left, right, top, bottom} = section
-        for (let x = left; x <= right; x++) {
-            for (let y = top; y <= bottom; y++) {
-                this.grid[`${x},${y}`].sections.splice(this.grid[`${x},${y}`].sections.indexOf(section), 1)
-                if (this.grid[`${x},${y}`].sections.length === 0) {
-                    delete this.grid[`${x},${y}`]
-                }
-            }
-        }
         this.sections.splice(this.sections.indexOf(section), 1)
         section._remove()
         this.updateBounds()
@@ -113,30 +91,21 @@ class Layout {
         return this.deleteSection(section)
     }
 
-    square(x, y, create) {
-        if (create) {
-            return this.grid[`${x},${y}`] || (this.grid[`${x},${y}`] = {
-                layout  : this,
-                x, y,
-                sections: [],
-                remove() {
-                    delete this.layout.grid[`${x},${y}`]
-                }
-            })
-        } else {
-            return this.grid[`${x},${y}`]
-        }
-    }
-
     toString() {
         let output = ""
         for (let y = this.bounds.top; y <= this.bounds.bottom; y++) {
             for (let x = this.bounds.left; x <= this.bounds.right; x++) {
-                let square = this.square(x, y)
-                if (square) {
-                    let name = square.sections[square.sections.length - 1].name
-                    output += name ? name[0] : 'x'
-                } else {
+                let printedSection = false
+                for (let sectionIndex = this.sections.length - 1; sectionIndex >= 0; sectionIndex--) {
+                    let section = this.sections[sectionIndex]
+                    if (section.left <= x && section.right >= x && section.top <= y && section.bottom >= y) {
+                        let {name} = section
+                        output += name ? name[0] : 'x'
+                        printedSection = true
+                        break
+                    }
+                }
+                if (!printedSection) {
                     output += ' '
                 }
             }

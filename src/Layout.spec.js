@@ -12,19 +12,10 @@ describe('Layout', function () {
         field(layout, 'bounds')
         field(layout, 'size', 12)
         field(layout, 'sections')
-        field(layout, 'grid')
         field(layout, 'width', 3)
         field(layout, 'height', 4)
     }
 
-    it('.forEachSquare()', () => {
-        let layout = new Layout()
-        layout.addSection(0, 0, 2, 0)
-        layout.addSection(0, 1, 1, 2)
-        let count = 0
-        layout.forEachSquare(square => count++)
-        expect(count).to.equal(7)
-    })
     it('.updateBounds()', () => {
         let layout = new Layout({autoShrink: false})
         layout.sections.push({
@@ -158,15 +149,6 @@ describe('Layout', function () {
         layout.deleteAllSections()
         expect(layout.sections.length).to.equal(0)
     })
-    it('.square()', () => {
-        let layout   = new Layout()
-        let section1 = layout.addSection(0, 0, 0, 0, 'beans')
-        layout.addSection(1, 1, 1, 1, 'beans')
-        let square = layout.square(0, 0)
-        expect(square.sections.length).to.equal(1)
-        expect(square.sections[0]).to.equal(section1)
-        expect(square.sections[0].squares[0]).to.equal(square)
-    })
 
     describe('usage', () => {
         it('autoShrink: false', () => {
@@ -260,17 +242,6 @@ describe('Layout', function () {
             expect(() => {
                 layout.addSection(2, 2, 2, 0)
             }).to.throw()
-
-            expect(layout.square(0, 0).x).to.equal(0)
-            expect(layout.square(0, 0).y).to.equal(0)
-            expect(layout.square(1, 1).x).to.equal(1)
-            expect(layout.square(1, 1).y).to.equal(1)
-            expect(layout.square(10, 10)).to.equal(undefined)
-
-            expect(layout.square(0, 0).sections.length).to.equal(2)
-            expect(layout.square(0, 1).sections.length).to.equal(1)
-            expect(layout.square(0, -1).sections.length).to.equal(1)
-            expect(layout.square(0, -1).sections[0]).to.not.equal(layout.square(0, 1).sections[0])
 
             /**
              * The image is actually based on connectors.

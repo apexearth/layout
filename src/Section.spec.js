@@ -7,15 +7,16 @@ describe('Section', function () {
     {
         let data    = {test: 1}
         let layout  = new Layout()
-        let section = layout.addSection(1, 2, 3, 4, 'hello', data)
+        let section = layout.addSection(1, 2, 3, 5, 'hello', data)
         field(section, 'layout', layout)
         field(section, 'name', 'hello')
         field(section, 'left', 1)
         field(section, 'top', 2)
         field(section, 'right', 3)
-        field(section, 'bottom', 4)
+        field(section, 'bottom', 5)
+        field(section, 'width', 3)
+        field(section, 'height', 4)
         field(section, 'data')
-        field(section, 'squares')
         field(section, 'leftSections')
         field(section, 'topSections')
         field(section, 'rightSections')
@@ -36,33 +37,6 @@ describe('Section', function () {
         expect(layout.sections[1] === section2).to.equal(true)
         section2.sendToBack()
         expect(layout.sections[1] === section1).to.equal(true)
-    })
-    it('.addAllSquares()', () => {
-        let layout = new Layout()
-        expect(layout.square(1, 1)).to.not.exist
-        expect(layout.square(1, 2)).to.not.exist
-        let section = new Section({
-            layout,
-            name: 'hi',
-            left: 1, top: 1, right: 1, bottom: 1
-        })
-        expect(layout.square(1, 1)).to.exist
-        expect(layout.square(1, 2)).to.not.exist
-    })
-    it('.removeAllSquares()', () => {
-        let layout = new Layout()
-        expect(layout.square(1, 1)).to.not.exist
-        expect(layout.square(1, 2)).to.not.exist
-        let section = new Section({
-            layout,
-            name: 'hi',
-            left: 1, top: 1, right: 1, bottom: 2
-        })
-        expect(layout.square(1, 1)).to.exist
-        expect(layout.square(1, 2)).to.exist
-        section.removeAllSquares()
-        expect(layout.square(1, 1)).to.not.exist
-        expect(layout.square(1, 2)).to.not.exist
     })
     it('.remove()', () => {
         let layout   = new Layout({overlap: true})
