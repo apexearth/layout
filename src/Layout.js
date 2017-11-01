@@ -2,9 +2,9 @@ const Section = require('./Section')
 
 class Layout {
     constructor({
-                    autoShrink = true,
-                    overlap = false
-                } = {}) {
+        autoShrink = true,
+        overlap = false
+    } = {}) {
         this.autoShrink = autoShrink
         this.overlap    = overlap
         this.bounds     = {
@@ -51,14 +51,15 @@ class Layout {
         this.size          = (1 + this.bounds.right - this.bounds.left) * (1 + this.bounds.bottom - this.bounds.top)
     }
 
-    addSection(left, top, right, bottom, name, data) {
+    addSection(left, top, right, bottom, name, data, corner) {
         if (left > right) throw new Error('Left can not be greater than right.')
         if (top > bottom) throw new Error('Top can not be greater than Bottom.')
         let section = new Section({
             layout: this,
             name,
             left, top, right, bottom,
-            data
+            data,
+            corner
         })
         this.sections.push(section)
         this.updateBounds(section)
@@ -99,7 +100,7 @@ class Layout {
                 for (let sectionIndex = this.sections.length - 1; sectionIndex >= 0; sectionIndex--) {
                     let section = this.sections[sectionIndex]
                     if (section.left <= x && section.right >= x && section.top <= y && section.bottom >= y) {
-                        let {name} = section
+                        let {name}     = section
                         output += name ? name[0] : 'x'
                         printedSection = true
                         break
@@ -114,12 +115,17 @@ class Layout {
         return output
     }
 
-    add({left, top, right, bottom, x, y, width, height, name, data}) {
+    add({
+        left, top, right, bottom,
+        x, y, width, height,
+        corner,
+        name, data
+    }) {
         left   = left || (x || 0)
         right  = right || ((x || 0) + width - 1)
         top    = top || (y || 0)
         bottom = bottom || ((y || 0) + height - 1)
-        return this.addSection(left, top, right, bottom, name, data)
+        return this.addSection(left, top, right, bottom, name, data, corner)
     }
 }
 

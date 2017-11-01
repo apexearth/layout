@@ -7,7 +7,7 @@ describe('Section', function () {
     {
         let data    = {test: 1}
         let layout  = new Layout()
-        let section = layout.addSection(1, 2, 3, 5, 'hello', data)
+        let section = layout.addSection(1, 2, 3, 5, 'hello', data, 'bottom-left')
         field(section, 'layout', layout)
         field(section, 'name', 'hello')
         field(section, 'left', 1)
@@ -16,11 +16,12 @@ describe('Section', function () {
         field(section, 'bottom', 5)
         field(section, 'width', 3)
         field(section, 'height', 4)
-        field(section, 'data')
-        field(section, 'leftSections')
-        field(section, 'topSections')
-        field(section, 'rightSections')
-        field(section, 'bottomSections')
+        field(section, 'data', data)
+        field(section, 'corner', 'bottom-left')
+        field(section, 'leftSections', [])
+        field(section, 'topSections', [])
+        field(section, 'rightSections', [])
+        field(section, 'bottomSections', [])
     }
     it('.bringToFront()', () => {
         let layout   = new Layout({overlap: true})
@@ -91,6 +92,21 @@ describe('Section', function () {
         expect(section2.name).to.equal('left21')
         expect(section2.rightSections).to.deep.equal([section1])
         expect(section1.leftSections).to.deep.equal([section2])
+
+        layout      = new Layout()
+        let topLeft = layout.add({
+            left: 0, right: 0, top: 0, bottom: 0, corner: 'bottom-right'
+        })
+        expect(() => {
+            topLeft.addRight({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addBottom({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addLeft({width: 1, height: 1})
+            topLeft.addTop({width: 1, height: 1})
+        }).to.not.throw()
     })
     it('.addRight()', () => {
         let layout   = new Layout({overlap: true})
@@ -108,6 +124,21 @@ describe('Section', function () {
         expect(section2.name).to.equal('right23')
         expect(section1.rightSections).to.deep.equal([section2])
         expect(section2.leftSections).to.deep.equal([section1])
+
+        layout      = new Layout()
+        let topLeft = layout.add({
+            left: 0, right: 0, top: 0, bottom: 0, corner: 'bottom-left'
+        })
+        expect(() => {
+            topLeft.addLeft({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addBottom({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addRight({width: 1, height: 1})
+            topLeft.addTop({width: 1, height: 1})
+        }).to.not.throw()
     })
     it('.addTop()', () => {
         let layout   = new Layout({overlap: true})
@@ -125,6 +156,21 @@ describe('Section', function () {
         expect(section2.name).to.equal('toppie')
         expect(section2.bottomSections).to.deep.equal([section1])
         expect(section1.topSections).to.deep.equal([section2])
+
+        layout      = new Layout()
+        let topLeft = layout.add({
+            left: 0, right: 0, top: 0, bottom: 0, corner: 'top-left'
+        })
+        expect(() => {
+            topLeft.addLeft({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addTop({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addRight({width: 1, height: 1})
+            topLeft.addBottom({width: 1, height: 1})
+        }).to.not.throw()
     })
     it('.addBottom()', () => {
         let layout   = new Layout({overlap: true})
@@ -142,6 +188,28 @@ describe('Section', function () {
         expect(section2.name).to.equal('bottle')
         expect(section1.bottomSections).to.deep.equal([section2])
         expect(section2.topSections).to.deep.equal([section1])
+
+        layout      = new Layout()
+        let topLeft = layout.add({
+            left: 0, right: 0, top: 0, bottom: 0, corner: 'top-right'
+        })
+        expect(() => {
+            topLeft.addRight({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addTop({width: 1, height: 1})
+        }).to.throw()
+        expect(() => {
+            topLeft.addLeft({width: 1, height: 1})
+            topLeft.addBottom({width: 1, height: 1})
+        }).to.not.throw()
+    })
+    it('.validate()', () => {
+        expect(() => {
+            new Section({
+                corner: 'bottom-top'
+            })
+        }).to.throw()
     })
     coverage(this, new Layout().addSection(1, 2, 3, 4, 'hello', {test: 1}))
 })

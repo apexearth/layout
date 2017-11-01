@@ -57,7 +57,11 @@ function hasTest(suite, name) {
 function field(object, name, value) {
     it(`.${name}`, () => {
         if (value) {
-            expect(object[name]).to.equal(value)
+            if (typeof value === 'object')
+                expect(object[name]).to.deep.equal(value)
+            else {
+                expect(object[name]).to.equal(value)
+            }
         } else {
             expect(object[name]).to.exist
         }
