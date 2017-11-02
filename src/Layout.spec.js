@@ -1,20 +1,19 @@
-const {coverage, field} = require('./test-coverage')
 const {expect}          = require('chai')
 const Layout            = require('./Layout')
 
 describe('Layout', function () {
 
-    {
+    it('defaults', () => {
         let layout = new Layout()
         layout.addSection(-1, -1, 1, 2)
-        field(layout, 'autoShrink', true)
-        field(layout, 'overlap', false)
-        field(layout, 'bounds')
-        field(layout, 'size', 12)
-        field(layout, 'sections')
-        field(layout, 'width', 3)
-        field(layout, 'height', 4)
-    }
+        expect(layout.autoShrink).to.equal(true)
+        expect(layout.overlap).to.equal(false)
+        expect(layout.bounds).to.exist
+        expect(layout.size).to.equal(12)
+        expect(layout.sections).to.exist
+        expect(layout.width).to.equal(3)
+        expect(layout.height).to.equal(4)
+    })
 
     it('.updateBounds()', () => {
         let layout = new Layout({autoShrink: false})
@@ -524,5 +523,4 @@ describe('Layout', function () {
         })
     })
 
-    coverage(this, new Layout())
 })
