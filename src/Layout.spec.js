@@ -1,27 +1,31 @@
-const {coverage, field} = require('./test-coverage')
-const {expect}          = require('chai')
-const Layout            = require('./Layout')
+const {expect} = require('chai')
+const Layout   = require('./Layout')
 
 describe('Layout', function () {
 
-    {
+    it('new Layout()', () => {
         let layout = new Layout()
         layout.addSection(-1, -1, 1, 2)
-        field(layout, 'autoShrink', true)
-        field(layout, 'overlap', false)
-        field(layout, 'bounds')
-        field(layout, 'size', 12)
-        field(layout, 'sections')
-        field(layout, 'width', 3)
-        field(layout, 'height', 4)
-    }
+        expect(layout.autoShrink).to.equal(true)
+        expect(layout.overlap).to.equal(false)
+        expect(layout.bounds).to.deep.equal({
+            left  : -1,
+            top   : -1,
+            right : 1,
+            bottom: 2
+        })
+        expect(layout.size).to.equal(12)
+        expect(layout.sections.length).to.equal(1)
+        expect(layout.width).to.equal(3)
+        expect(layout.height).to.equal(4)
+    })
 
-    it('.updateBounds()', () => {
+    it('._updateBounds()', () => {
         let layout = new Layout({autoShrink: false})
         layout.sections.push({
             left: 1, top: 1, bottom: 2, right: 2
         })
-        layout.updateBounds()
+        layout._updateBounds()
         expect(layout.size).to.equal(4)
         expect(layout.bounds).to.deep.equal({
             left: 1, top: 1, bottom: 2, right: 2
@@ -30,21 +34,21 @@ describe('Layout', function () {
         layout.sections.push({
             left: -1, top: 0, bottom: 2, right: 2
         })
-        layout.updateBounds()
+        layout._updateBounds()
         expect(layout.size).to.equal(12)
         expect(layout.bounds).to.deep.equal({
             left: -1, top: 0, bottom: 2, right: 2
         })
 
         layout.sections.splice(0)
-        layout.updateBounds()
+        layout._updateBounds()
         expect(layout.size).to.equal(12)
         expect(layout.bounds).to.deep.equal({
             left: -1, top: 0, bottom: 2, right: 2
         })
 
         layout.autoShrink = true
-        layout.updateBounds()
+        layout._updateBounds()
         expect(layout.size).to.equal(0)
         expect(layout.bounds).to.deep.equal({
             left  : undefined,
@@ -53,10 +57,10 @@ describe('Layout', function () {
             bottom: undefined,
         })
     })
-    it('.updateBoundsForSection()', () => {
+    it('._updateBoundsForSection()', () => {
         let layout = new Layout()
 
-        // Only works if these are set as is done in .updateBounds().
+        // Only works if these are set as is done in ._updateBounds().
         layout.bounds.left   = Number.MAX_SAFE_INTEGER
         layout.bounds.right  = Number.MIN_SAFE_INTEGER
         layout.bounds.top    = Number.MAX_SAFE_INTEGER
@@ -65,7 +69,7 @@ describe('Layout', function () {
         let section = {
             left: 1, top: 1, bottom: 2, right: 2
         }
-        layout.updateBoundsForSection(section)
+        layout._updateBoundsForSection(section)
         expect(layout.size).to.equal(4)
         expect(layout.bounds).to.deep.equal({
             left: 1, top: 1, bottom: 2, right: 2
@@ -523,6 +527,4 @@ describe('Layout', function () {
             expect(ship.size).to.equal(56)
         })
     })
-
-    coverage(this, new Layout())
 })

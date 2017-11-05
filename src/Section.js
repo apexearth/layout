@@ -1,3 +1,6 @@
+/**
+ * The Section class.
+ */
 class Section {
     constructor({
         layout, name,
@@ -5,17 +8,29 @@ class Section {
         data = {},
         corner
     }) {
-        this.layout         = layout
-        this.name           = name
-        this.left           = left
-        this.top            = top
-        this.right          = right
-        this.bottom         = bottom
-        this.data           = Object.assign({}, data)
-        this.corner         = corner
-        this.leftSections   = []
-        this.topSections    = []
-        this.rightSections  = []
+        /** @type {Layout} */
+        this.layout = layout
+        /** @type {string} */
+        this.name = name
+        /** @type {number} */
+        this.left = left
+        /** @type {number} */
+        this.top = top
+        /** @type {number} */
+        this.right = right
+        /** @type {number} */
+        this.bottom = bottom
+        /** @type {*} */
+        this.data = Object.assign({}, data)
+        /**  @type {'top-left'|'top-right'|'bottom-right'|'bottom-left'|undefined} */
+        this.corner = corner
+        /** @type {Array} */
+        this.leftSections = []
+        /** @type {Array} */
+        this.topSections = []
+        /** @type {Array} */
+        this.rightSections = []
+        /** @type {Array} */
         this.bottomSections = []
         this.validate()
     }
@@ -62,7 +77,7 @@ class Section {
         this.top += differenceY
         this.right += differenceX
         this.bottom += differenceY
-        this.layout.updateBounds()
+        this.layout._updateBounds()
     }
 
     addRight({name, shift = 0, width, height, data}) {
