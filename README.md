@@ -3,7 +3,7 @@
 ## @apexearth/layout
 ## Install
 ```
-npm install layout
+npm install @apexearth/layout
 ```
 
 ## Usage

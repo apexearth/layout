@@ -80,41 +80,41 @@ class Section {
         this.layout._updateBounds()
     }
 
-    addRight({name, shift = 0, width, height, data}) {
+    addRight({name, shift = 0, width, height, data, corner}) {
         if (this.corner === 'top-right' || this.corner === 'bottom-right') throw new Error('Section has no right side to add to!')
         let x       = this.right + 1
         let y       = this.top + shift
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data, corner)
         add(this.rightSections, section)
         add(section.leftSections, this)
         return section
     }
 
-    addTop({name, shift = 0, width, height, data}) {
+    addTop({name, shift = 0, width, height, data, corner}) {
         if (this.corner === 'top-left' || this.corner === 'top-right') throw new Error('Section has no top side to add to!')
         let x       = this.left + shift
         let y       = this.top - height
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data, corner)
         add(this.topSections, section)
         add(section.bottomSections, this)
         return section
     }
 
-    addLeft({name, shift = 0, width, height, data}) {
+    addLeft({name, shift = 0, width, height, data, corner}) {
         if (this.corner === 'top-left' || this.corner === 'bottom-left') throw new Error('Section has no left side to add to!')
         let x       = this.left - width
         let y       = this.top + shift
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data, corner)
         add(this.leftSections, section)
         add(section.rightSections, this)
         return section
     }
 
-    addBottom({name, shift = 0, width, height, data}) {
+    addBottom({name, shift = 0, width, height, data, corner}) {
         if (this.corner === 'bottom-left' || this.corner === 'bottom-right') throw new Error('Section has no bottom side to add to!')
         let x       = this.left + shift
         let y       = this.bottom + 1
-        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data)
+        let section = this.layout.addSection(x, y, x + width - 1, y + height - 1, name, data, corner)
         add(this.bottomSections, section)
         add(section.topSections, this)
         return section
