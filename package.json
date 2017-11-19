@@ -10,6 +10,7 @@
     "readme-layout": "jsdoc2md src/Layout.js >> README.md",
     "readme-section": "jsdoc2md src/Section.js >> README.md"
   },
+  "repository": "https://github.com/apexearth/layout",
   "author": {
     "name": "Christopher Jacobs",
     "email": "apexearth@gmail.com"
