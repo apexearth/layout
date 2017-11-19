@@ -166,16 +166,42 @@ class Layout {
      * Get all sections at a coordinate.
      * @param x {number}
      * @param y {number}
+     * @param ignoredSection {Section}
      */
-    sectionsAt(x, y) {
+    sectionsAt(x, y, ignoredSection) {
         assert.ok(typeof x === 'number', 'x must be a number')
         assert.ok(typeof y === 'number', 'y must be a number')
-        return this.sections.filter(section => !(
-            section.left > x ||
-            section.right < x ||
-            section.top > y ||
-            section.bottom < y
-        ))
+        return this.sections.filter(section =>
+            section !== ignoredSection &&
+            !(
+                section.left > x ||
+                section.right < x ||
+                section.top > y ||
+                section.bottom < y
+            ))
+    }
+
+    /**
+     * Check if an area is empty.
+     * @param left {number}
+     * @param top {number}
+     * @param right {number}
+     * @param bottom {number}
+     * @param ignoredSection {Section} - A section to ignore.
+     */
+    isEmptyWithin(left, top, right, bottom, ignoredSection) {
+        assert.ok(typeof left === 'number', 'left must be a number')
+        assert.ok(typeof top === 'number', 'top must be a number')
+        assert.ok(typeof right === 'number', 'right must be a number')
+        assert.ok(typeof bottom === 'number', 'bottom must be a number')
+        for (let x = left; x <= right; x++) {
+            for (let y = top; y <= bottom; y++) {
+                if (this.sectionsAt(x, y, ignoredSection).length) {
+                    return false
+                }
+            }
+        }
+        return true
     }
 
     /**
