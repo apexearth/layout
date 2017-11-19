@@ -1,6 +1,6 @@
 {
   "name": "@apexearth/layout",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "A package to manage the creation and usage of layouts like two-dimensional floor plans, maps, etc, using a grid.",
   "main": "src/index.js",
   "scripts": {
@@ -16,7 +16,10 @@
   },
   "license": "ISC",
   "keywords": [
-    "layout", "grid", "sections", "map"
+    "layout",
+    "grid",
+    "sections",
+    "map"
   ],
   "eslintConfig": {
     "parserOptions": {

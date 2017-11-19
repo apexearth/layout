@@ -153,6 +153,14 @@ describe('Layout', function () {
         layout.deleteAllSections()
         expect(layout.sections.length).to.equal(0)
     })
+    it('.sectionsAt()', () => {
+        let layout = new Layout()
+        let s1     = layout.addSection(0, 0, 0, 0, 'a')
+        let s2     = layout.addSection(1, 0, 1, 0, 'b')
+        expect(layout.sectionsAt(0, 0)[0]).to.equal(s1)
+        expect(layout.sectionsAt(1, 0)[0]).to.equal(s2)
+        expect(layout.sectionsAt(1, 1).length).to.equal(0)
+    })
 
     describe('usage', () => {
         it('autoShrink: false', () => {

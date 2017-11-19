@@ -1,4 +1,5 @@
 const Section = require('./Section')
+const assert  = require("assert")
 
 /**
  * Class used to create layouts.
@@ -159,6 +160,22 @@ class Layout {
      */
     removeSection(section) {
         return this.deleteSection(section)
+    }
+
+    /**
+     * Get all sections at a coordinate.
+     * @param x {number}
+     * @param y {number}
+     */
+    sectionsAt(x, y) {
+        assert.ok(typeof x === 'number', 'x must be a number')
+        assert.ok(typeof y === 'number', 'y must be a number')
+        return this.sections.filter(section => !(
+            section.left > x ||
+            section.right < x ||
+            section.top > y ||
+            section.bottom < y
+        ))
     }
 
     /**

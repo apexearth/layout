@@ -120,6 +120,23 @@ class Section {
         return section
     }
 
+    resize(left, top, right, bottom) {
+        const overlap = this.layout.sections.filter(section =>
+            left < section.left ||
+            top < section.top ||
+            right > section.right ||
+            bottom > section.bottom
+        ).length
+        if (overlap) {
+            throw new Error('Cannot resize section due to overlap.')
+        } else {
+            this.left   = left
+            this.top    = top
+            this.right  = right
+            this.bottom = bottom
+        }
+    }
+
     validate() {
         if (this.corner) {
             if (this.corner !== 'top-left' &&
