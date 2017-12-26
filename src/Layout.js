@@ -34,6 +34,12 @@ class Layout {
         this.size = 0
 
         /**
+         * The total filled area of the Layout. (Total width * height of all sections)
+         * @type {number}
+         */
+        this.fillSize = 0
+
+        /**
          * The sections within the Layout.
          * @type {Array}
          */
@@ -75,6 +81,7 @@ class Layout {
                 this.size          = 0
             }
         }
+        this.fillSize = 0
         this.sections.forEach(section => this._updateBoundsForSection(section))
     }
 
@@ -89,6 +96,7 @@ class Layout {
         this.bounds.right  = Math.max(this.bounds.right, right)
         this.bounds.bottom = Math.max(this.bounds.bottom, bottom)
         this.size          = (1 + this.bounds.right - this.bounds.left) * (1 + this.bounds.bottom - this.bounds.top)
+        this.fillSize      = this.fillSize + (right - left + 1) * (bottom - top + 1)
     }
 
     /**
@@ -252,10 +260,10 @@ class Layout {
         corner,
         name, data
     }) {
-        left   = left || (x || 0)
-        right  = right || ((x || 0) + width - 1)
-        top    = top || (y || 0)
-        bottom = bottom || ((y || 0) + height - 1)
+        if (left === undefined) left = (x || 0)
+        if (right === undefined) right = ((x || 0) + width - 1)
+        if (top === undefined) top = (y || 0)
+        if (bottom === undefined) bottom = ((y || 0) + height - 1)
         return this.addSection(left, top, right, bottom, name, data, corner)
     }
 }

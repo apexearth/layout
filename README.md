@@ -22,6 +22,7 @@ Class used to create layouts.
     * [new Layout(autoShrink, overlap)](#new_Layout_new)
     * [.bounds](#Layout+bounds) : <code>Object</code>
     * [.size](#Layout+size) : <code>number</code>
+    * [.fillSize](#Layout+fillSize) : <code>number</code>
     * [.sections](#Layout+sections) : <code>Array</code>
     * [.width](#Layout+width) ⇒ <code>number</code>
     * [.height](#Layout+height) ⇒ <code>number</code>
@@ -30,6 +31,8 @@ Class used to create layouts.
     * [.deleteSections(x, y)](#Layout+deleteSections)
     * [.deleteSection(section)](#Layout+deleteSection) ⇒ <code>Section</code>
     * [.removeSection(section)](#Layout+removeSection) ⇒ <code>Section</code>
+    * [.sectionsAt(x, y, ignoredSection)](#Layout+sectionsAt)
+    * [.isEmptyWithin(left, top, right, bottom, ignoredSection)](#Layout+isEmptyWithin)
     * [.toString()](#Layout+toString) ⇒ <code>string</code>
     * [.add(left, top, right, bottom, x, y, width, height, corner, name, data)](#Layout+add) ⇒ <code>Section</code>
 
@@ -52,6 +55,12 @@ The bounds of the Layout.
 
 ### layout.size : <code>number</code>
 The total area of the Layout. (width * height)
+
+**Kind**: instance property of [<code>Layout</code>](#Layout)  
+<a name="Layout+fillSize"></a>
+
+### layout.fillSize : <code>number</code>
+The total filled area of the Layout. (Total width * height of all sections)
 
 **Kind**: instance property of [<code>Layout</code>](#Layout)  
 <a name="Layout+sections"></a>
@@ -128,6 +137,34 @@ Same as deleteSection.
 | Param | Description |
 | --- | --- |
 | section | The section to delete from the Layout. |
+
+<a name="Layout+sectionsAt"></a>
+
+### layout.sectionsAt(x, y, ignoredSection)
+Get all sections at a coordinate.
+
+**Kind**: instance method of [<code>Layout</code>](#Layout)  
+
+| Param | Type |
+| --- | --- |
+| x | <code>number</code> | 
+| y | <code>number</code> | 
+| ignoredSection | <code>Section</code> | 
+
+<a name="Layout+isEmptyWithin"></a>
+
+### layout.isEmptyWithin(left, top, right, bottom, ignoredSection)
+Check if an area is empty.
+
+**Kind**: instance method of [<code>Layout</code>](#Layout)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| left | <code>number</code> |  |
+| top | <code>number</code> |  |
+| right | <code>number</code> |  |
+| bottom | <code>number</code> |  |
+| ignoredSection | <code>Section</code> | A section to ignore. |
 
 <a name="Layout+toString"></a>
 

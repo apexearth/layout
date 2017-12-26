@@ -71,6 +71,7 @@ describe('Layout', function () {
         }
         layout._updateBoundsForSection(section)
         expect(layout.size).to.equal(4)
+        expect(layout.fillSize).to.equal(4)
         expect(layout.bounds).to.deep.equal({
             left: 1, top: 1, bottom: 2, right: 2
         })
@@ -88,12 +89,21 @@ describe('Layout', function () {
             left: 1, top: 1, bottom: 5, right: 5
         })
         expect(section.data.test).to.equal(42)
+        section = layout.add({left: 0, right: 0, top: 0, bottom: 0})
+        expect(layout.bounds.left).to.equal(0)
+        expect(layout.bounds.top).to.equal(0)
+        expect(layout.bounds.right).to.equal(5)
+        expect(layout.bounds.bottom).to.equal(5)
+        expect(layout.size).to.equal(36)
+        expect(layout.fillSize).to.equal(26)
+
     })
     it('.addSection()', () => {
         let layout   = new Layout()
         let section1 = layout.addSection(0, 0, 0, 0, 'a', {test: 1})
         let section2 = layout.addSection(1, 0, 1, 0, 'b', {test: 2})
         expect(layout.size).to.equal(2)
+        expect(layout.fillSize).to.equal(2)
         expect(layout.bounds).to.deep.equal({
             left: 0, top: 0, right: 1, bottom: 0
         })
@@ -179,6 +189,7 @@ describe('Layout', function () {
             )
             layout.addSection(1, 3, 1, 6)
             expect(layout.size).to.equal(12)
+            expect(layout.fillSize).to.equal(4)
             expect(layout.bounds).to.deep.equal({
                 left: 1, top: 3, right: 3, bottom: 6
             })
