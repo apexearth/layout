@@ -111,6 +111,7 @@ class Layout {
      * @returns {Section}
      */
     addSection(left, top, right, bottom, name, data, corner) {
+        validateNumbers(left, top, right, bottom)
         if (left > right) throw new Error('Left can not be greater than right.')
         if (top > bottom) throw new Error('Top can not be greater than Bottom.')
         let section = new Section({
@@ -269,3 +270,9 @@ class Layout {
 }
 
 module.exports = Layout
+
+function validateNumbers(...args) {
+    args.forEach(number => {
+        assert(typeof number === 'number' && !Number.isNaN(number) && Number.isFinite(number), `${number} is not a valid number.`)
+    })
+}
