@@ -146,6 +146,20 @@ class Section {
                 throw new Error(`${this.corner} is an invalid corner.`)
             }
         }
+        if (!this.layout.overlap) {
+            const overlap = this.layout.sections.filter(section =>
+                section !== this &&
+                !(
+                    this.left < section.left ||
+                    this.top < section.top ||
+                    this.right > section.right ||
+                    this.bottom > section.bottom
+                )
+            ).length
+            if (overlap) {
+                throw new Error('Section is invalid due to overlap.')
+            }
+        }
     }
 }
 
