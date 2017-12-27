@@ -330,6 +330,21 @@ describe('Layout', function () {
                 ''
             )
         })
+        it('section overlap', () => {
+            const layout = new Layout()
+            layout.add({
+                left: 0, right: 0,
+                top : 0, bottom: 0
+            })
+            expect(() => {
+                layout.add({
+                    left: 0, right: 0,
+                    top : 0, bottom: 0
+                })
+            }).to.throw()
+            expect(layout.sections.length).to.equal(1)
+
+        })
     })
     describe("practical applications", () => {
         it('tv room layout', () => {
