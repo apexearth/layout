@@ -122,10 +122,13 @@ class Section {
 
     resize(left, top, right, bottom) {
         const overlap = this.layout.sections.filter(section =>
-            left < section.left ||
-            top < section.top ||
-            right > section.right ||
-            bottom > section.bottom
+            section !== this &&
+            !(
+                right < section.left ||
+                bottom < section.top ||
+                left > section.right ||
+                top > section.bottom
+            )
         ).length
         if (overlap) {
             throw new Error('Cannot resize section due to overlap.')
@@ -149,17 +152,21 @@ class Section {
         if (!this.layout.overlap) {
             const overlap = this.layout.sections.filter(section =>
                 section !== this &&
-                !(
-                    this.left < section.left ||
-                    this.top < section.top ||
-                    this.right > section.right ||
-                    this.bottom > section.bottom
-                )
+                this.overlaps(section)
             ).length
             if (overlap) {
                 throw new Error('Section is invalid due to overlap.')
             }
         }
+    }
+
+    overlaps(section) {
+        return !(
+            this.right < section.left ||
+            this.bottom < section.top ||
+            this.left > section.right ||
+            this.top > section.bottom
+        )
     }
 }
 

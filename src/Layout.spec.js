@@ -342,6 +342,12 @@ describe('Layout', function () {
                     top : 0, bottom: 0
                 })
             }).to.throw()
+            expect(() => {
+                layout.add({
+                    left: -1, right: 1,
+                    top : 0, bottom: 1
+                })
+            }).to.throw()
             expect(layout.sections.length).to.equal(1)
 
         })
